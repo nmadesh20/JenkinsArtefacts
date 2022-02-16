@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo "Building release ${RELEASE} with log level ${LOG_LEVEL}"
             }
-        }
+        
         parallel {
             stage ('linux-arm64') {
                 steps {
@@ -30,6 +30,7 @@ pipeline {
                     echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
                 }
             }
+        }
         }
         stage ('Test') {
             environment {
