@@ -1,0 +1,63 @@
+pipeline {
+    agent any 
+    environment {
+        RELEASE = '20.04'
+    }
+
+    stages {
+        stage ('Build') {
+            agent any 
+            environment {
+                LOG_LEVEl = 'INFO'
+            }
+            steps {
+                echo "Building release ${RELEASE} with log level ${LOG_LEVEL}"
+            }
+        }
+        parallel {
+            stage ('linux-arm64') {
+                steps {
+                    echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
+                }
+            }
+            stage ('linux-amd64') {
+                steps {
+                    echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
+                }
+            }
+            stage ('windows-amd64') {
+                steps {
+                    echo "Building release ${RELEASE} for ${STAGE_NAME} with log level ${LOG_LEVEL}..."
+                }
+            }
+        }
+        stage ('Test') {
+            environment {
+                LOG_LEVEL = 'WARNING'
+            }
+            steps {
+                echo "Testing... I Can see release ${RELEASE}, but with log level ${LOG_LEVEL}"
+            }
+        }
+        stage ('Deploy') {
+            input {
+                message 'Deploy?'
+                ok 'Do it!'
+                parameters {
+                    string(name: 'TARGET_ENVIRONMENT', defaultValue: 'PROD', description: 'Target deployment environment')
+                }
+            }
+            steps {
+                echo "Deploying release ${RELEASE} to environment ${TARGET_ENVIRONMENT}"
+            }
+        }
+    }
+    post{
+        onfailure {
+            echo "The deployment failed"
+        }
+        onsuccess {
+            echo "The deployment succeeded"
+        }
+    }
+}
