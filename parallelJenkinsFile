@@ -54,10 +54,10 @@ pipeline {
         }
     }
     post{
-        onfailure {
+        failure {
             echo "The deployment failed"
         }
-        onsuccess {
+        success {
             echo "The deployment succeeded"
         }
     }
